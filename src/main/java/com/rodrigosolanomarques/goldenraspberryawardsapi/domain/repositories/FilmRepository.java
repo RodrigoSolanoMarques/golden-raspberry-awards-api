@@ -13,6 +13,6 @@ public interface FilmRepository extends JpaRepository<FilmEntity, Long> {
     @Query("SELECT f "
             + "FROM FilmEntity f "
             + "WHERE f.winner = 'YES' "
-            + "ORDER BY f.producers, f.year ASC")
+            + "ORDER BY f.year, f.producers ASC")
     List<FilmEntity> findAllWinningFilm();
 }

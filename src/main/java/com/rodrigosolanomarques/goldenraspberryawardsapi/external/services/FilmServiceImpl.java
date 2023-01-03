@@ -47,28 +47,32 @@ public class FilmServiceImpl implements FilmService {
         List<WinningProducerDTO> winningIntervalList = new ArrayList<>();
 
         for (FilmEntity filmEntity : allWinners) {
-            WinningProducerDTO winningProducerDTO = mapAllWinners.get(filmEntity.getProducers());
 
-            if (!existWinningProducer(winningProducerDTO)) {
-                winningProducerDTO = new WinningProducerDTO(
-                        filmEntity.getProducers(),
+            for (String producer : filmEntity.getProducers()) {
+
+                WinningProducerDTO winningProducerDTO = mapAllWinners.get(producer);
+
+                if (!existWinningProducer(winningProducerDTO)) {
+                    winningProducerDTO = new WinningProducerDTO(
+                            producer,
+                            filmEntity.getYear(),
+                            filmEntity.getYear(),
+                            INITIAL_INTERVAL
+                    );
+                    mapAllWinners.put(producer, winningProducerDTO);
+                    continue;
+                }
+
+                WinningProducerDTO nextYearWinningProducerDTO = new WinningProducerDTO(
+                        producer,
+                        winningProducerDTO.followingWin(),
                         filmEntity.getYear(),
-                        filmEntity.getYear(),
-                        INITIAL_INTERVAL
+                        calculateInterval(filmEntity.getYear(), winningProducerDTO.followingWin())
                 );
-                mapAllWinners.put(filmEntity.getProducers(), winningProducerDTO);
-                continue;
+
+                winningIntervalList.add(nextYearWinningProducerDTO);
+                mapAllWinners.put(producer, nextYearWinningProducerDTO);
             }
-
-            WinningProducerDTO nextYearWinningProducerDTO = new WinningProducerDTO(
-                    filmEntity.getProducers(),
-                    winningProducerDTO.followingWin(),
-                    filmEntity.getYear(),
-                    calculateInterval(filmEntity.getYear(), winningProducerDTO.followingWin())
-            );
-
-            winningIntervalList.add(nextYearWinningProducerDTO);
-            mapAllWinners.put(filmEntity.getProducers(), nextYearWinningProducerDTO);
         }
 
         return winningIntervalList;

@@ -49,10 +49,12 @@ class GoldenRaspberryAwardsApiApplicationTests {
 
         for (WinningProducerDTO producer : maxList) {
             assertTrue(csv.contains(producer.producer()));
+            assertEquals(producer.interval(), (producer.followingWin() - producer.previousWin()));
         }
 
         for (WinningProducerDTO producer : minList) {
             assertTrue(csv.contains(producer.producer()));
+            assertEquals(producer.interval(), (producer.followingWin() - producer.previousWin()));
         }
     }
 

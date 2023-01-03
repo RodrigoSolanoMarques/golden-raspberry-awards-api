@@ -3,6 +3,9 @@ package com.rodrigosolanomarques.goldenraspberryawardsapi.domain.entities;
 import com.rodrigosolanomarques.goldenraspberryawardsapi.domain.enumerator.EWinner;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -54,7 +57,7 @@ public class FilmEntity {
         return studios;
     }
 
-    public String getProducers() {
+    public String getProducersInline() {
         return producers;
     }
 
@@ -78,4 +81,40 @@ public class FilmEntity {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public final List<String> getProducers() {
+
+        if (!hasMoreThanProducer()) {
+            return List.of(producers.trim());
+        }
+
+        if (!hasMoreThanTwoProducers()) {
+            return parseTwoProducers();
+        }
+
+        return parseMoreThanTwoProducers();
+    }
+
+    public boolean hasMoreThanProducer() {
+        return producers.contains("and");
+    }
+
+    private List<String> parseTwoProducers() {
+        return Arrays.stream(producers.split("and")).map(String::trim).toList();
+    }
+
+    public boolean hasMoreThanTwoProducers() {
+        if(!hasMoreThanProducer()){
+            return false;
+        }
+        return producers.contains(",");
+    }
+
+    private List<String> parseMoreThanTwoProducers() {
+        String[] splits = producers.split("and");
+        List<String> producersList = new ArrayList<>(Arrays.stream(splits[0].split(",")).map(String::trim).toList());
+        producersList.add(splits[1].trim());
+        return producersList;
+    }
+
 }
